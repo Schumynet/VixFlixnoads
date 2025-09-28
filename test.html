@@ -1,152 +1,59 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>VixFlix</title>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      background: #141414; color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      line-height: 1.6;
-    }
-    /* Header */
-    header {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%);
-      backdrop-filter: blur(10px); padding: 1rem 4%;
-      display: flex; justify-content: space-between; align-items: center;
-      transition: background 0.3s ease;
-    }
-    header.scrolled { background: rgba(0,0,0,0.95); }
-    .logo { font-size: 2rem; font-weight: bold; color: #e50914; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); }
-    .search-container { position: relative; }
-    #search {
-      padding: 12px 20px; font-size: 1rem; width: 350px;
-      border: 2px solid rgba(255,255,255,0.2); border-radius: 25px;
-      background: rgba(0,0,0,0.7); color: #fff; transition: all 0.3s ease; outline: none;
-    }
-    #search:focus { border-color: #e50914; box-shadow: 0 0 20px rgba(229, 9, 20, 0.3); transform: scale(1.02); }
-    #search::placeholder { color: rgba(255,255,255,0.7); }
-
-    main { margin-top: 80px; }
-
-    .hero {
-      height: 70vh; background: linear-gradient(45deg, #e50914, #b20710);
-      display: flex; align-items: center; justify-content: center; text-align: center; margin-bottom: 3rem;
-      background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="50" cy="10" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="10" cy="60" r="1" fill="rgba(255,255,255,0.1)"/><circle cx="90" cy="40" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
-    }
-    .hero-content h1 { font-size: 4rem; margin-bottom: 1rem; text-shadow: 3px 3px 6px rgba(0,0,0,0.8); }
-    .hero-content p { font-size: 1.5rem; opacity: 0.9; max-width: 600px; margin: 0 auto; }
-
-    section { margin: 3rem 0; }
-    section h2 {
-      font-size: 2rem; margin-bottom: 1.5rem; padding-left: 4%; color: #fff; position: relative;
-    }
-    section h2::before {
-      content: ''; position: absolute; left: 4%; bottom: -5px; width: 60px; height: 3px; background: #e50914;
-    }
-
-    .carousel-container { position: relative; margin: 0 4%; }
-    .carousel {
-      display: flex; overflow-x: auto; gap: 1rem; scroll-snap-type: x mandatory;
-      scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; padding: 0 50px;
-    }
-    .carousel::-webkit-scrollbar { display: none; }
-
-    .carousel-btn {
-      position: absolute; top: 50%; transform: translateY(-50%);
-      background: rgba(0,0,0,0.8); color: white; border: none; width: 40px; height: 40px; border-radius: 50%;
-      cursor: pointer; font-size: 1.2rem; z-index: 10; transition: all 0.3s ease;
-      display: flex; align-items: center; justify-content: center; backdrop-filter: blur(5px);
-    }
-    .carousel-btn:hover { background: rgba(229, 9, 20, 0.9); transform: translateY(-50%) scale(1.1); box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4); }
-    .carousel-btn.prev { left: 5px; } .carousel-btn.next { right: 5px; }
-    .carousel-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .carousel-btn:disabled:hover { background: rgba(0,0,0,0.8); transform: translateY(-50%) scale(1); box-shadow: none; }
-
-    .card {
-      min-width: 200px; cursor: pointer; transition: all 0.3s ease; scroll-snap-align: start;
-      position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    }
-    .card:hover { transform: scale(1.08) translateY(-10px); box-shadow: 0 8px 30px rgba(0,0,0,0.5); z-index: 10; }
-    .card.clicked { animation: cardClick 0.6s ease-out; }
-    @keyframes cardClick {
-      0% { transform: scale(1); } 25% { transform: scale(1.1) rotateY(5deg); } 50% { transform: scale(1.05) rotateY(-2deg); }
-      75% { transform: scale(1.08) rotateY(1deg); } 100% { transform: scale(1.15) rotateY(0deg); opacity: 0; }
-    }
-    .card img { width: 100%; height: 300px; object-fit: cover; transition: transform 0.3s ease; }
-    .card:hover img { transform: scale(1.1); }
-    .card .info {
-      position: absolute; bottom: 0; left: 0; width: 100%;
-      background: linear-gradient(transparent, rgba(0,0,0,0.9)); padding: 20px 10px 10px; font-size: 0.9rem;
-      text-align: center; font-weight: 600; transform: translateY(100%); transition: transform 0.3s ease;
-    }
-    .card:hover .info { transform: translateY(0); }
-
-    #results { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 2rem; padding: 2rem 4%; }
-
-    #player { display: none; padding: 2rem 4%; min-height: 100vh; }
-    .player-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-    .back-btn {
-      background: #e50914; color: white; border: none; padding: 12px 24px; border-radius: 25px; cursor: pointer;
-      font-size: 1rem; transition: all 0.3s ease; display: flex; align-items: center; gap: 10px;
-    }
-    .back-btn:hover { background: #b20710; transform: translateY(-2px); box-shadow: 0 4px 15px rgba(229, 9, 20, 0.4); }
-
-    .player-info {
-      background: linear-gradient(135deg, rgba(229, 9, 20, 0.1), rgba(0, 0, 0, 0.8)); border-radius: 12px; padding: 2rem;
-      margin-bottom: 2rem; backdrop-filter: blur(10px); border: 1px solid rgba(229, 9, 20, 0.2);
-    }
-    .player-info h1 { font-size: 2.5rem; margin-bottom: 1rem; color: #e50914; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
-    .player-info .meta { display: flex; gap: 2rem; margin-bottom: 1rem; flex-wrap: wrap; }
-    .player-info .meta span {
-      background: rgba(255,255,255,0.1); padding: 0.5rem 1rem; border-radius: 20px; font-size: 0.9rem; backdrop-filter: blur(5px);
-    }
-    .player-info .overview { line-height: 1.6; opacity: 0.9; font-size: 1.1rem; }
-
-    .player-content { display: grid; grid-template-columns: 1fr 300px; gap: 2rem; }
-    .video-container { position: relative; border-radius: 12px; overflow: hidden; box-shadow: 0 8px 30px rgba(0,0,0,0.5); }
-    .episode-selector { background: rgba(255,255,255,0.1); border-radius: 12px; padding: 1.5rem; backdrop-filter: blur(10px); height: fit-content; }
-    .episode-selector h3 { margin-bottom: 1rem; color: #e50914; }
-    .season-selector { margin-bottom: 1.5rem; }
-    .season-selector label { display: block; margin-bottom: 0.5rem; font-weight: 600; }
-    .season-selector select {
-      width: 100%; padding: 10px; border: 2px solid rgba(255,255,255,0.2); border-radius: 8px; background: rgba(0,0,0,0.7); color: #fff; outline: none;
-    }
-    .season-selector select:focus { border-color: #e50914; }
-    .episodes-list { max-height: 400px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #e50914 transparent; }
-    .episode-item { padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; cursor: pointer; transition: all 0.3s ease; border: 2px solid transparent; }
-    .episode-item:hover { background: rgba(229, 9, 20, 0.2); border-color: #e50914; }
-    .episode-item.active { background: rgba(229, 9, 20, 0.3); border-color: #e50914; }
-    .episode-number { font-weight: bold; color: #e50914; margin-bottom: 4px; }
-    .episode-title { font-size: 0.9rem; opacity: 0.9; }
-
-    .video-container iframe { width: 100%; height: 60vh; border: none; }
-
-    .continue-controls { display: flex; gap: 10px; align-items: center; justify-content: flex-end; padding: 0 4%; margin-top: 0.5rem; }
-    .continue-controls button {
-      background: rgba(255,255,255,0.06); color: #fff; border: 1px solid rgba(255,255,255,0.08); padding: 8px 12px; border-radius: 8px; cursor: pointer;
-    }
-    .continue-controls button:hover { background: rgba(229,9,20,0.14); }
-
-    @media (max-width: 768px) {
-      .player-content { grid-template-columns: 1fr; }
-      .hero-content h1 { font-size: 2.5rem; }
-      #search { width: 250px; }
-      .card { min-width: 150px; }
-    }
-
-    .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #e50914; animation: spin 1s ease-in-out infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#141414; color:#fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height:1.6; }
+    header { position:fixed; top:0; left:0; right:0; z-index:100; background:linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%); backdrop-filter: blur(10px); padding:1rem 4%; display:flex; justify-content:space-between; align-items:center; transition:background .3s; }
+    header.scrolled { background:rgba(0,0,0,.95); }
+    .logo { font-size:2rem; font-weight:700; color:#e50914; text-shadow:2px 2px 4px rgba(0,0,0,.8); }
+    #search { padding:12px 20px; font-size:1rem; width:350px; border:2px solid rgba(255,255,255,.2); border-radius:25px; background:rgba(0,0,0,.7); color:#fff; outline:none; transition:all .3s; }
+    #search:focus { border-color:#e50914; box-shadow:0 0 20px rgba(229,9,20,.3); transform:scale(1.02); }
+    main { margin-top:80px; }
+    .hero { height:70vh; background:linear-gradient(45deg,#e50914,#b20710); display:flex; align-items:center; justify-content:center; text-align:center; margin-bottom:3rem; }
+    .hero-content h1 { font-size:4rem; margin-bottom:1rem; text-shadow:3px 3px 6px rgba(0,0,0,.8); }
+    .hero-content p { font-size:1.5rem; opacity:.9; max-width:600px; margin:0 auto; }
+    section { margin:3rem 0; }
+    section h2 { font-size:2rem; margin-bottom:1.5rem; padding-left:4%; color:#fff; position:relative; }
+    section h2::before { content:''; position:absolute; left:4%; bottom:-5px; width:60px; height:3px; background:#e50914; }
+    .carousel-container { position:relative; margin:0 4%; }
+    .carousel { display:flex; overflow-x:auto; gap:1rem; scroll-snap-type:x mandatory; scrollbar-width:none; -ms-overflow-style:none; scroll-behavior:smooth; padding:0 50px; }
+    .carousel::-webkit-scrollbar { display:none; }
+    .carousel-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.8); color:#fff; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.2rem; z-index:10; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px); transition:all .3s; }
+    .carousel-btn.prev { left:5px; } .carousel-btn.next { right:5px; }
+    .carousel-btn:hover { background:rgba(229,9,20,.9); transform:translateY(-50%) scale(1.1); box-shadow:0 4px 15px rgba(229,9,20,.4); }
+    .card { min-width:200px; cursor:pointer; transition:all .3s; scroll-snap-align:start; position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,.3); }
+    .card img { width:100%; height:300px; object-fit:cover; transition:transform .3s; }
+    .card .info { position:absolute; bottom:0; left:0; width:100%; background:linear-gradient(transparent, rgba(0,0,0,.9)); padding:20px 10px 10px; font-size:.9rem; text-align:center; font-weight:600; transform:translateY(100%); transition:transform .3s; }
+    .card:hover img { transform:scale(1.1); } .card:hover .info { transform:translateY(0); }
+    #results { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:2rem; padding:2rem 4%; }
+    #player { display:none; padding:2rem 4%; min-height:100vh; }
+    .player-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
+    .back-btn { background:#e50914; color:#fff; border:none; padding:12px 24px; border-radius:25px; cursor:pointer; font-size:1rem; display:flex; gap:10px; align-items:center; }
+    .player-info { background:linear-gradient(135deg, rgba(229,9,20,.1), rgba(0,0,0,.8)); border-radius:12px; padding:2rem; margin-bottom:2rem; backdrop-filter:blur(10px); border:1px solid rgba(229,9,20,.2); }
+    .player-info h1 { font-size:2.5rem; margin-bottom:1rem; color:#e50914; text-shadow:2px 2px 4px rgba(0,0,0,.5); }
+    .player-content { display:grid; grid-template-columns:1fr 300px; gap:2rem; }
+    .video-container { position:relative; border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,.5); }
+    iframe#player-iframe { width:100%; height:60vh; border:none; }
+    .episode-selector { background:rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; backdrop-filter:blur(10px); }
+    .episodes-list { max-height:400px; overflow-y:auto; }
+    .episode-item { padding:12px; margin-bottom:8px; background:rgba(255,255,255,.03); border-radius:8px; cursor:pointer; border:2px solid transparent; }
+    .episode-item.active { background:rgba(229,9,20,.18); border-color:#e50914; }
+    .continue-controls { display:flex; gap:10px; align-items:center; justify-content:flex-end; padding:0 4%; margin-top:.5rem; }
+    .continue-controls button { background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.08); padding:8px 12px; border-radius:8px; cursor:pointer; }
+    .loading { display:inline-block; width:20px; height:20px; border:3px solid rgba(255,255,255,.3); border-radius:50%; border-top-color:#e50914; animation:spin 1s linear infinite; }
+    @keyframes spin { to{ transform:rotate(360deg); } }
+    @media (max-width:768px){ .player-content{ grid-template-columns:1fr } #search{ width:250px } .card{ min-width:150px } }
   </style>
 </head>
 <body>
   <header id="header">
     <div class="logo">VixFlix</div>
     <div class="search-container">
-      <input type="text" id="search" placeholder="🔍 Cerca film, serie TV...">
+      <input id="search" type="text" placeholder="🔍 Cerca film, serie TV..." />
     </div>
   </header>
 
@@ -159,7 +66,7 @@
         </div>
       </section>
 
-      <!-- Continua a guardare verrà inserita dinamicamente da JS -->
+      <!-- continue-watching injected by JS -->
 
       <section id="trending">
         <h2>🔥 Trending</h2>
@@ -213,7 +120,7 @@
       <div class="player-header">
         <div style="display:flex;gap:10px;align-items:center;">
           <button class="back-btn" onclick="goBack()">← Torna indietro</button>
-          <div style="color:rgba(255,255,255,0.7);font-size:0.9rem;">Se premi Indietro verrà fermata la riproduzione</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.9rem;">Se premi Indietro verrà fermata la riproduzione</div>
         </div>
         <div style="display:flex;gap:10px;">
           <button onclick="clearLastWatched()" title="Rimuovi elemento 'Continua a guardare'">Rimuovi Continua</button>
@@ -228,15 +135,23 @@
 
       <div class="player-content">
         <div class="video-container">
-          <iframe id="player-iframe" allowfullscreen></iframe>
+          <iframe id="player-iframe" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
         </div>
-        <div class="episode-selector" id="episode-selector" style="display: none;">
+
+        <div class="episode-selector" id="episode-selector" style="display:none;">
           <h3>Seleziona episodio</h3>
           <div class="season-selector">
             <label>Stagione:</label>
             <select id="season-select"></select>
           </div>
           <div class="episodes-list" id="episodes-list"></div>
+
+          <div style="margin-top:12px;">
+            <button onclick="saveCurrentTimestampManually()">Salva timestamp corrente</button>
+            <div style="margin-top:8px;color:rgba(255,255,255,.7);font-size:.9rem;">
+              Nota: per motivi di cross-origin il salvataggio automatico del currentTime in iframe potrebbe non funzionare.
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -254,8 +169,8 @@
 
     let currentItem = null;
     let currentSeasons = [];
+    let timestampPollInterval = null;
 
-    // Header scroll effect
     window.addEventListener('scroll', () => {
       const header = document.getElementById('header');
       if (window.scrollY > 50) header.classList.add('scrolled'); else header.classList.remove('scrolled');
@@ -264,7 +179,7 @@
     async function fetchList(type) {
       const res = await fetch(`https://api.themoviedb.org/3/${endpoints[type]}?api_key=${API_KEY}&language=it-IT`);
       const j = await res.json();
-      return j.results;
+      return j.results || [];
     }
 
     async function fetchTVSeasons(tvId) {
@@ -283,26 +198,22 @@
       const div = document.createElement('div');
       div.className = 'card';
       const posterPath = item.poster_path ? `https://image.tmdb.org/t/p/w300${item.poster_path}` : 'https://via.placeholder.com/300x450/333/fff?text=No+Image';
-      div.innerHTML = `
-        <img src="${posterPath}" alt="${item.title || item.name}">
-        <div class="info">${item.title || item.name}</div>
-      `;
-      div.onclick = () => {
-        div.classList.add('clicked');
-        setTimeout(() => play(item), 300);
-      };
+      div.innerHTML = `<img src="${posterPath}" alt="${item.title || item.name}"><div class="info">${item.title || item.name}</div>`;
+      div.onclick = () => { div.classList.add('clicked'); setTimeout(() => play(item), 300); };
       return div;
     }
 
     function fillSection(sectionId, items) {
       const carousel = document.querySelector(`#${sectionId} .carousel`);
+      if (!carousel) return;
       carousel.innerHTML = '';
-      items.slice(0, 20).forEach(item => carousel.appendChild(makeCard(item)));
+      items.slice(0,20).forEach(item => carousel.appendChild(makeCard(item)));
       updateCarouselButtons(sectionId);
     }
 
     function scrollCarousel(sectionId, direction) {
       const carousel = document.querySelector(`#${sectionId} .carousel`);
+      if (!carousel) return;
       const scrollAmount = 220;
       const currentScroll = carousel.scrollLeft;
       const targetScroll = currentScroll + (direction * scrollAmount * 3);
@@ -314,10 +225,9 @@
       const carousel = document.querySelector(`#${sectionId} .carousel`);
       const prevBtn = document.querySelector(`#${sectionId} .carousel-btn.prev`);
       const nextBtn = document.querySelector(`#${sectionId} .carousel-btn.next`);
-      if (carousel && prevBtn && nextBtn) {
-        prevBtn.disabled = carousel.scrollLeft <= 0;
-        nextBtn.disabled = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth);
-      }
+      if (!carousel || !prevBtn || !nextBtn) return;
+      prevBtn.disabled = carousel.scrollLeft <= 0;
+      nextBtn.disabled = carousel.scrollLeft >= (carousel.scrollWidth - carousel.clientWidth);
     }
 
     async function loadHome() {
@@ -329,49 +239,48 @@
           fetchList('onTheAir'),
           fetchList('popularTV')
         ]);
-
         fillSection('trending', trending);
         fillSection('nowPlaying', np);
         fillSection('popularMovies', pm);
         fillSection('onTheAir', ota);
         fillSection('popularTV', ptv);
 
-        ['trending', 'nowPlaying', 'popularMovies', 'onTheAir', 'popularTV'].forEach(sectionId => {
+        ['trending','nowPlaying','popularMovies','onTheAir','popularTV'].forEach(sectionId => {
           const carousel = document.querySelector(`#${sectionId} .carousel`);
-          carousel.addEventListener('scroll', () => updateCarouselButtons(sectionId));
+          if (carousel) carousel.addEventListener('scroll', () => updateCarouselButtons(sectionId));
         });
 
         showContinueWatching();
-      } catch (error) {
-        console.error('Errore nel caricamento:', error);
+      } catch (e) {
+        console.error('Errore nel caricamento:', e);
       }
     }
 
     function showContinueWatching() {
-      const data = JSON.parse(localStorage.getItem("lastWatched"));
+      const data = JSON.parse(localStorage.getItem('lastWatched'));
       const existing = document.getElementById('continueWatching');
       if (existing) existing.remove();
       if (!data) return;
 
       const section = document.createElement('section');
       section.id = 'continueWatching';
+      let subtitle = '';
+      if (data.type === 'tv') subtitle = `S${data.seasonNumber}E${data.episodeNumber}`;
+      const titleEscaped = (data.title || 'Contenuto').replace(/"/g,'');
 
-      let subtitle = "";
-      if (data.type === "tv") subtitle = `S${data.seasonNumber}E${data.episodeNumber}`;
-      const titleEscaped = data.title ? data.title.replace(/"/g, '') : 'Contenuto';
-
+      const timeLabel = data.timestamp ? ` • ⏱️ ${formatTime(data.timestamp)}` : '';
       section.innerHTML = `
         <h2>⏯️ Continua a guardare</h2>
         <div class="carousel-container">
           <div class="carousel">
             <div class="card" onclick="resumeLastWatched()">
               <img src="https://via.placeholder.com/300x450/222/fff?text=${encodeURIComponent(titleEscaped)}" alt="${titleEscaped}">
-              <div class="info">${titleEscaped} ${subtitle}</div>
+              <div class="info">${titleEscaped} ${subtitle} ${timeLabel}</div>
             </div>
           </div>
         </div>
         <div class="continue-controls">
-          <div style="color:rgba(255,255,255,0.7);font-size:0.9rem;">Salvato il: ${new Date(data.savedAt || Date.now()).toLocaleString()}</div>
+          <div style="color:rgba(255,255,255,.7);font-size:.9rem;">Salvato il: ${new Date(data.savedAt || Date.now()).toLocaleString()}</div>
           <button onclick="resumeLastWatched()">Riprendi</button>
           <button onclick="clearLastWatched()">Rimuovi</button>
         </div>
@@ -387,15 +296,32 @@
     }
 
     function resumeLastWatched() {
-      const data = JSON.parse(localStorage.getItem("lastWatched"));
+      const data = JSON.parse(localStorage.getItem('lastWatched'));
       if (!data) return;
 
-      if (data.type === "movie") {
-        play({ id: data.id, title: data.title, name: data.title });
-      } else if (data.type === "tv") {
+      if (data.type === 'movie') {
+        const url = buildUrlForMovie(data.id, data.timestamp);
+        showPlayerForMovie(data.id, data.title, url);
+      } else {
+        const url = buildUrlForEpisode(data.id, data.seasonNumber, data.episodeNumber, data.timestamp);
+        // Ensure player UI updated via play() then navigate to episode/url
         play({ id: data.id, name: data.title });
-        setTimeout(() => playEpisode(data.id, data.seasonNumber, data.episodeNumber), 800);
+        setTimeout(() => {
+          document.getElementById('player-iframe').src = url;
+        }, 700);
       }
+    }
+
+    function buildUrlForMovie(id, timestamp) {
+      let url = `https://vixsrc.to/movie/${id}/?primaryColor=ff0000&lang=it`;
+      if (timestamp) url += `&start=${Math.floor(timestamp)}`;
+      return url;
+    }
+
+    function buildUrlForEpisode(tvId, seasonNumber, episodeNumber, timestamp) {
+      let url = `https://vixsrc.to/tv/${tvId}/${seasonNumber}/${episodeNumber}/?primaryColor=ff0000&lang=it`;
+      if (timestamp) url += `&start=${Math.floor(timestamp)}`;
+      return url;
     }
 
     async function fetchItemDetails(item) {
@@ -409,12 +335,10 @@
       currentItem = item;
       const isMovie = item.title !== undefined;
       const id = item.id;
-
       const details = await fetchItemDetails(item);
 
       document.getElementById('player-title').textContent = item.title || item.name;
       document.getElementById('player-overview').textContent = details.overview || 'Nessuna descrizione disponibile.';
-
       const metaDiv = document.getElementById('player-meta');
       metaDiv.innerHTML = '';
 
@@ -422,24 +346,12 @@
         const year = details.release_date ? new Date(details.release_date).getFullYear() : 'N/A';
         const duration = details.runtime ? `${details.runtime} min` : 'N/A';
         const rating = details.vote_average ? `⭐ ${details.vote_average.toFixed(1)}` : 'N/A';
-
-        metaDiv.innerHTML = `
-          <span>🎬 Film</span>
-          <span>📅 ${year}</span>
-          <span>⏱️ ${duration}</span>
-          <span>${rating}</span>
-        `;
+        metaDiv.innerHTML = `<span>🎬 Film</span><span>📅 ${year}</span><span>⏱️ ${duration}</span><span>${rating}</span>`;
       } else {
         const year = details.first_air_date ? new Date(details.first_air_date).getFullYear() : 'N/A';
         const seasons = details.number_of_seasons ? `${details.number_of_seasons} stagioni` : 'N/A';
         const rating = details.vote_average ? `⭐ ${details.vote_average.toFixed(1)}` : 'N/A';
-
-        metaDiv.innerHTML = `
-          <span>📺 Serie TV</span>
-          <span>📅 ${year}</span>
-          <span>🎭 ${seasons}</span>
-          <span>${rating}</span>
-        `;
+        metaDiv.innerHTML = `<span>📺 Serie TV</span><span>📅 ${year}</span><span>🎭 ${seasons}</span><span>${rating}</span>`;
       }
 
       document.getElementById('home').style.display = 'none';
@@ -448,33 +360,35 @@
 
       if (isMovie) {
         document.getElementById('episode-selector').style.display = 'none';
-        const url = `https://vixsrc.to/movie/${id}/?primaryColor=ff0000&lang=it`;
+        const url = buildUrlForMovie(id, getSavedTimestampIfSame('movie', id));
         document.getElementById('player-iframe').src = url;
 
         localStorage.setItem('lastWatched', JSON.stringify({
-          type: 'movie',
-          id,
-          title: item.title || item.name || 'Film',
-          savedAt: Date.now(),
-          timestamp: null
+          type: 'movie', id, title: item.title || item.name || 'Film', savedAt: Date.now(), timestamp: getSavedTimestampIfSame('movie', id)
         }));
         showContinueWatching();
+        startTimestampPolling(); // try polling via postMessage where possible
       } else {
         document.getElementById('episode-selector').style.display = 'block';
         await loadTVSeasons(id);
       }
 
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
+    }
+
+    function getSavedTimestampIfSame(type, id) {
+      const data = JSON.parse(localStorage.getItem('lastWatched'));
+      if (!data) return null;
+      if (data.type === type && data.id == id) return data.timestamp || null;
+      return null;
     }
 
     async function loadTVSeasons(tvId) {
       try {
         const seasons = await fetchTVSeasons(tvId);
-        currentSeasons = seasons.filter(season => season.season_number > 0);
-
+        currentSeasons = seasons.filter(s => s.season_number > 0);
         const seasonSelect = document.getElementById('season-select');
         seasonSelect.innerHTML = '';
-
         currentSeasons.forEach(season => {
           const option = document.createElement('option');
           option.value = season.season_number;
@@ -484,7 +398,14 @@
 
         if (currentSeasons.length > 0) {
           await loadSeasonEpisodes(tvId, currentSeasons[0].season_number);
-          playEpisode(tvId, currentSeasons[0].season_number, 1);
+          const resume = JSON.parse(localStorage.getItem('lastWatched'));
+          if (resume && resume.type === 'tv' && resume.id == tvId) {
+            // If same show saved, resume saved episode and timestamp
+            await loadSeasonEpisodes(tvId, resume.seasonNumber);
+            playEpisode(tvId, resume.seasonNumber, resume.episodeNumber, resume.timestamp);
+          } else {
+            playEpisode(tvId, currentSeasons[0].season_number, 1);
+          }
         }
 
         seasonSelect.addEventListener('change', async (e) => {
@@ -492,8 +413,8 @@
           await loadSeasonEpisodes(tvId, seasonNumber);
           playEpisode(tvId, seasonNumber, 1);
         });
-      } catch (error) {
-        console.error('Errore nel caricamento delle stagioni:', error);
+      } catch (e) {
+        console.error('Errore caricamento stagioni', e);
       }
     }
 
@@ -502,30 +423,25 @@
         const episodes = await fetchSeasonEpisodes(tvId, seasonNumber);
         const episodesList = document.getElementById('episodes-list');
         episodesList.innerHTML = '';
-
-        episodes.forEach(episode => {
+        episodes.forEach(ep => {
           const episodeDiv = document.createElement('div');
           episodeDiv.className = 'episode-item';
-          episodeDiv.innerHTML = `
-            <div class="episode-number">Episodio ${episode.episode_number}</div>
-            <div class="episode-title">${episode.name || `Episodio ${episode.episode_number}`}</div>
-          `;
+          episodeDiv.innerHTML = `<div class="episode-number">Episodio ${ep.episode_number}</div><div class="episode-title">${ep.name || `Episodio ${ep.episode_number}`}</div>`;
           episodeDiv.onclick = () => {
             document.querySelectorAll('.episode-item').forEach(el => el.classList.remove('active'));
             episodeDiv.classList.add('active');
-            playEpisode(tvId, seasonNumber, episode.episode_number);
+            playEpisode(tvId, seasonNumber, ep.episode_number);
           };
           episodesList.appendChild(episodeDiv);
         });
-
         if (episodes.length > 0) episodesList.firstChild.classList.add('active');
-      } catch (error) {
-        console.error('Errore nel caricamento degli episodi:', error);
+      } catch (e) {
+        console.error('Errore caricamento episodi', e);
       }
     }
 
-    function playEpisode(tvId, seasonNumber, episodeNumber) {
-      const url = `https://vixsrc.to/tv/${tvId}/${seasonNumber}/${episodeNumber}/?primaryColor=ff0000&lang=it`;
+    function playEpisode(tvId, seasonNumber, episodeNumber, forcedTimestamp = null) {
+      const url = buildUrlForEpisode(tvId, seasonNumber, episodeNumber, forcedTimestamp || getSavedTimestampIfSame('tv', tvId));
       document.getElementById('player-iframe').src = url;
 
       localStorage.setItem('lastWatched', JSON.stringify({
@@ -535,48 +451,116 @@
         seasonNumber,
         episodeNumber,
         savedAt: Date.now(),
-        timestamp: null
+        timestamp: forcedTimestamp || getSavedTimestampIfSame('tv', tvId) || null
       }));
 
       showContinueWatching();
+      startTimestampPolling();
     }
 
     function goBack() {
+      stopTimestampPolling();
       document.getElementById('player').style.display = 'none';
       document.getElementById('home').style.display = 'block';
       document.getElementById('player-iframe').src = '';
       showContinueWatching();
-      window.scrollTo(0, 0);
+      window.scrollTo(0,0);
     }
 
-    // Search functionality
-    document.getElementById('search').addEventListener('keydown', async e => {
-      if (e.key === 'Enter') {
-        const q = e.target.value.trim();
-        if (!q) return;
+    // Manual save button for timestamp (useful when we cannot read iframe time)
+    function saveCurrentTimestampManually() {
+      const input = prompt('Inserisci il timestamp in secondi da salvare (es. 123):', '0');
+      if (input === null) return;
+      const seconds = parseInt(input, 10);
+      if (isNaN(seconds) || seconds < 0) { alert('Valore non valido'); return; }
+      const data = JSON.parse(localStorage.getItem('lastWatched')) || {};
+      data.timestamp = seconds;
+      data.savedAt = Date.now();
+      localStorage.setItem('lastWatched', JSON.stringify(data));
+      showContinueWatching();
+      alert('Timestamp salvato: ' + formatTime(seconds));
+    }
 
-        document.getElementById('home').style.display = 'none';
-        document.getElementById('player').style.display = 'none';
-        const resDiv = document.getElementById('results');
-        resDiv.innerHTML = '<div class="loading"></div>';
+    // Attempt to poll iframe via postMessage for players that support it (best-effort)
+    function startTimestampPolling() {
+      stopTimestampPolling();
+      const iframe = document.getElementById('player-iframe');
+      if (!iframe) return;
 
+      // Try to request time every 5s using postMessage — many third-party players won't respond due to CORS
+      timestampPollInterval = setInterval(() => {
         try {
-          const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(q)}&language=it-IT`);
-          const data = await res.json();
-          resDiv.innerHTML = '';
-
-          if (!data.results || data.results.length === 0) {
-            resDiv.innerHTML = '<p style="text-align:center;font-size:1.2rem;opacity:0.7;">Nessun risultato trovato</p>';
-          } else {
-            data.results.forEach(item => {
-              const card = makeCard(item);
-              resDiv.appendChild(card);
-            });
-          }
-        } catch (error) {
-          console.error('Errore nella ricerca:', error);
-          resDiv.innerHTML = '<p style="text-align:center;color:#e50914;">Errore durante la ricerca</p>';
+          // Ask iframe for time (many providers ignore this)
+          iframe.contentWindow.postMessage({ type: 'REQUEST_CURRENT_TIME' }, '*');
+        } catch (e) {
+          // ignore
         }
+      }, 5000);
+    }
+
+    function stopTimestampPolling() {
+      if (timestampPollInterval) {
+        clearInterval(timestampPollInterval);
+        timestampPollInterval = null;
+      }
+    }
+
+    // Listen for messages from iframe (providers that support postMessage can reply with { type:'CURRENT_TIME', currentTime: seconds })
+    window.addEventListener('message', (ev) => {
+      if (!ev.data) return;
+      const msg = ev.data;
+      if (msg.type === 'CURRENT_TIME' && typeof msg.currentTime === 'number') {
+        const data = JSON.parse(localStorage.getItem('lastWatched')) || {};
+        data.timestamp = Math.floor(msg.currentTime);
+        data.savedAt = Date.now();
+        localStorage.setItem('lastWatched', JSON.stringify(data));
+        showContinueWatching();
+      }
+    });
+
+    function formatTime(sec) {
+      if (!sec && sec !== 0) return '';
+      const s = Number(sec);
+      const h = Math.floor(s / 3600);
+      const m = Math.floor((s % 3600) / 60);
+      const ss = Math.floor(s % 60);
+      return (h > 0 ? h + ':' : '') + String(m).padStart(h > 0 ? 2 : 1, '0') + ':' + String(ss).padStart(2,'0');
+    }
+
+    // Helper when showing movie via resume
+    function showPlayerForMovie(id, title, url) {
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('results').style.display = 'none';
+      document.getElementById('player').style.display = 'block';
+      document.getElementById('player-title').textContent = title || 'Film';
+      document.getElementById('player-overview').textContent = '';
+      document.getElementById('player-iframe').src = url;
+      localStorage.setItem('lastWatched', JSON.stringify({ type:'movie', id, title, savedAt: Date.now(), timestamp: getSavedTimestampIfSame('movie', id) || null }));
+      showContinueWatching();
+      startTimestampPolling();
+    }
+
+    // Search
+    document.getElementById('search').addEventListener('keydown', async (e) => {
+      if (e.key !== 'Enter') return;
+      const q = e.target.value.trim();
+      if (!q) return;
+      document.getElementById('home').style.display = 'none';
+      document.getElementById('player').style.display = 'none';
+      const resDiv = document.getElementById('results');
+      resDiv.innerHTML = '<div class="loading"></div>';
+      try {
+        const res = await fetch(`https://api.themoviedb.org/3/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(q)}&language=it-IT`);
+        const data = await res.json();
+        resDiv.innerHTML = '';
+        if (!data.results || data.results.length === 0) {
+          resDiv.innerHTML = '<p style="text-align:center;font-size:1.2rem;opacity:.7;">Nessun risultato trovato</p>';
+        } else {
+          data.results.forEach(item => resDiv.appendChild(makeCard(item)));
+        }
+      } catch (e) {
+        console.error('Errore nella ricerca', e);
+        resDiv.innerHTML = '<p style="text-align:center;color:#e50914;">Errore durante la ricerca</p>';
       }
     });
 
