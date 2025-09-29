@@ -6,7 +6,7 @@
   <title>VixFlix</title>
   <style>
     *{margin:0;padding:0;box-sizing:border-box}
-    body{background:#141414;color:#fff;font-family:'Segoe UI',Tahoma, Geneva, Verdana, sans-serif;line-height:1.6}
+    body{background:#141414;color:#fff;font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;line-height:1.6}
     header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,rgba(0,0,0,.9)0%,rgba(0,0,0,.7)70%,transparent 100%);backdrop-filter:blur(10px);padding:1rem 4%;display:flex;justify-content:space-between;align-items:center;transition:background .3s}
     header.scrolled{background:rgba(0,0,0,.95)}
     .logo{font-size:2rem;font-weight:700;color:#e50914;text-shadow:2px 2px 4px rgba(0,0,0,.8)}
@@ -132,8 +132,8 @@
       </div>
 
       <div class="player-content">
-        <div class="video-container">
-          <!-- iframe senza sandbox, libero di eseguire script e comunicare -->
+        <div class="video-container" id="video-container">
+          <!-- iframe WITHOUT sandbox so provider scripts/postMessage can work -->
           <iframe id="player-iframe" allowfullscreen></iframe>
         </div>
 
@@ -148,7 +148,7 @@
           <div style="margin-top:12px;">
             <button onclick="saveCurrentTimestampManually()">Salva timestamp corrente</button>
             <div style="margin-top:8px;color:rgba(255,255,255,.7);font-size:.9rem;">
-              Nota: se il provider supporta postMessage salveremo automaticamente il currentTime.
+              Nota: se il provider nel frame supporta postMessage salveremo automaticamente currentTime.
             </div>
           </div>
         </div>
@@ -169,6 +169,16 @@
     let currentItem = null;
     let currentSeasons = [];
     let timestampPollInterval = null;
+    let ytPlayer = null;
+    let nativeVideo = null;
+
+    function ensureYouTubeAPI(cb) {
+      if (window.YT && window.YT.Player) return cb();
+      const s = document.createElement('script');
+      s.src = "https://www.youtube.com/iframe_api";
+      window.onYouTubeIframeAPIReady = cb;
+      document.head.appendChild(s);
+    }
 
     window.addEventListener('scroll', () => {
       const header = document.getElementById('header');
@@ -304,6 +314,12 @@
         play({ id: data.id, name: data.title });
         setTimeout(() => {
           const url = buildUrlForEpisode(data.id, data.seasonNumber, data.episodeNumber, data.timestamp);
+          const iframe = document.getElementById('player-iframe');
+          // restore iframe container if it was replaced by YT player earlier
+          const container = document.getElementById('video-container');
+          if (!container.querySelector('iframe')) {
+            container.innerHTML = `<iframe id="player-iframe" allowfullscreen></iframe>`;
+          }
           document.getElementById('player-iframe').src = url;
           startTimestampPolling();
         }, 700);
@@ -441,6 +457,10 @@
 
     function playEpisode(tvId, seasonNumber, episodeNumber, forcedTimestamp = null) {
       const url = buildUrlForEpisode(tvId, seasonNumber, episodeNumber, forcedTimestamp || getSavedTimestampIfSame('tv', tvId));
+      const iframe = document.getElementById('player-iframe');
+      // restore iframe if replaced
+      const container = document.getElementById('video-container');
+      if (!container.querySelector('iframe')) container.innerHTML = `<iframe id="player-iframe" allowfullscreen></iframe>`;
       document.getElementById('player-iframe').src = url;
 
       localStorage.setItem('lastWatched', JSON.stringify({
@@ -461,7 +481,8 @@
       stopTimestampPolling();
       document.getElementById('player').style.display = 'none';
       document.getElementById('home').style.display = 'block';
-      document.getElementById('player-iframe').src = '';
+      const container = document.getElementById('video-container');
+      container.innerHTML = `<iframe id="player-iframe" allowfullscreen></iframe>`;
       showContinueWatching();
       window.scrollTo(0,0);
     }
@@ -483,19 +504,82 @@
       stopTimestampPolling();
       const iframe = document.getElementById('player-iframe');
       if (!iframe) return;
+      const src = iframe.src || '';
+
+      const ytMatch = src.match(/(?:youtube\.com\/watch\?v=|youtube\.com\/embed\/|youtu\.be\/)([A-Za-z0-9_-]{6,})/);
+      if (ytMatch) {
+        const videoId = ytMatch[1];
+        ensureYouTubeAPI(() => {
+          const container = document.getElementById('video-container');
+          container.innerHTML = `<div id="yt-player"></div>`;
+          ytPlayer = new YT.Player('yt-player', {
+            videoId,
+            playerVars: { autoplay: 1, origin: location.origin },
+            events: {
+              onReady: function() {
+                const data = JSON.parse(localStorage.getItem('lastWatched')) || {};
+                const saved = data.timestamp || 0;
+                if (saved) ytPlayer.seekTo(saved, true);
+                timestampPollInterval = setInterval(() => {
+                  try {
+                    const t = Math.floor(ytPlayer.getCurrentTime());
+                    const stored = JSON.parse(localStorage.getItem('lastWatched')) || {};
+                    stored.timestamp = t;
+                    stored.savedAt = Date.now();
+                    localStorage.setItem('lastWatched', JSON.stringify(stored));
+                    showContinueWatching();
+                  } catch (e) {}
+                }, 5000);
+              }
+            }
+          });
+        });
+        return;
+      }
+
+      try {
+        const cw = iframe.contentWindow;
+        if (cw && typeof cw.document !== 'undefined') {
+          const v = cw.document.querySelector('video');
+          if (v) {
+            nativeVideo = v;
+            timestampPollInterval = setInterval(() => {
+              try {
+                const t = Math.floor(nativeVideo.currentTime);
+                const stored = JSON.parse(localStorage.getItem('lastWatched')) || {};
+                stored.timestamp = t;
+                stored.savedAt = Date.now();
+                localStorage.setItem('lastWatched', JSON.stringify(stored));
+                showContinueWatching();
+              } catch (e) {}
+            }, 3000);
+            return;
+          }
+        }
+      } catch (e) {}
+
       timestampPollInterval = setInterval(() => {
-        try { iframe.contentWindow.postMessage({ type:'REQUEST_CURRENT_TIME' }, '*'); } catch(e) {}
+        try { iframe.contentWindow.postMessage({ type:'REQUEST_CURRENT_TIME' }, '*'); } catch (e) {}
       }, 5000);
     }
 
     function stopTimestampPolling() {
       if (timestampPollInterval) { clearInterval(timestampPollInterval); timestampPollInterval = null; }
+      if (ytPlayer) { try { ytPlayer.destroy(); } catch (e) {} ytPlayer = null; const container = document.getElementById('video-container'); container.innerHTML = `<iframe id="player-iframe" allowfullscreen></iframe>`; }
+      nativeVideo = null;
     }
 
     window.addEventListener('message', (ev) => {
       if (!ev.data) return;
       const msg = ev.data;
       if (msg.type === 'CURRENT_TIME' && typeof msg.currentTime === 'number') {
+        const data = JSON.parse(localStorage.getItem('lastWatched')) || {};
+        data.timestamp = Math.floor(msg.currentTime);
+        data.savedAt = Date.now();
+        localStorage.setItem('lastWatched', JSON.stringify(data));
+        showContinueWatching();
+      }
+      if (msg.currentTime && typeof msg.currentTime === 'number') {
         const data = JSON.parse(localStorage.getItem('lastWatched')) || {};
         data.timestamp = Math.floor(msg.currentTime);
         data.savedAt = Date.now();
@@ -519,7 +603,8 @@
       document.getElementById('player').style.display = 'block';
       document.getElementById('player-title').textContent = title || 'Film';
       document.getElementById('player-overview').textContent = '';
-      document.getElementById('player-iframe').src = url;
+      const container = document.getElementById('video-container');
+      container.innerHTML = `<iframe id="player-iframe" allowfullscreen src="${url}"></iframe>`;
       localStorage.setItem('lastWatched', JSON.stringify({ type:'movie', id, title, savedAt: Date.now(), timestamp: getSavedTimestampIfSame('movie', id) || null }));
       showContinueWatching();
       startTimestampPolling();
@@ -548,7 +633,7 @@
       }
     });
 
-    // Avvio
+    // Initialize
     loadHome();
   </script>
 </body>
