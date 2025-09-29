@@ -5,56 +5,54 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>VixFlix</title>
   <style>
-    * { margin:0; padding:0; box-sizing:border-box; }
-    body { background:#141414; color:#fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height:1.6; }
-    header { position:fixed; top:0; left:0; right:0; z-index:100; background:linear-gradient(180deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.7) 70%, transparent 100%); backdrop-filter: blur(10px); padding:1rem 4%; display:flex; justify-content:space-between; align-items:center; transition:background .3s; }
-    header.scrolled { background:rgba(0,0,0,.95); }
-    .logo { font-size:2rem; font-weight:700; color:#e50914; text-shadow:2px 2px 4px rgba(0,0,0,.8); }
-    #search { padding:12px 20px; font-size:1rem; width:350px; border:2px solid rgba(255,255,255,.2); border-radius:25px; background:rgba(0,0,0,.7); color:#fff; outline:none; transition:all .3s; }
-    #search:focus { border-color:#e50914; box-shadow:0 0 20px rgba(229,9,20,.3); transform:scale(1.02); }
-    main { margin-top:80px; }
-    .hero { height:70vh; background:linear-gradient(45deg,#e50914,#b20710); display:flex; align-items:center; justify-content:center; text-align:center; margin-bottom:3rem; }
-    .hero-content h1 { font-size:4rem; margin-bottom:1rem; text-shadow:3px 3px 6px rgba(0,0,0,.8); }
-    .hero-content p { font-size:1.5rem; opacity:.9; max-width:600px; margin:0 auto; }
-    section { margin:3rem 0; }
-    section h2 { font-size:2rem; margin-bottom:1.5rem; padding-left:4%; color:#fff; position:relative; }
-    section h2::before { content:''; position:absolute; left:4%; bottom:-5px; width:60px; height:3px; background:#e50914; }
-    .carousel-container { position:relative; margin:0 4%; }
-    .carousel { display:flex; overflow-x:auto; gap:1rem; scroll-snap-type:x mandatory; scrollbar-width:none; -ms-overflow-style:none; scroll-behavior:smooth; padding:0 50px; }
-    .carousel::-webkit-scrollbar { display:none; }
-    .carousel-btn { position:absolute; top:50%; transform:translateY(-50%); background:rgba(0,0,0,.8); color:#fff; border:none; width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.2rem; z-index:10; display:flex; align-items:center; justify-content:center; backdrop-filter:blur(5px); transition:all .3s; }
-    .carousel-btn.prev { left:5px; } .carousel-btn.next { right:5px; }
-    .carousel-btn:hover { background:rgba(229,9,20,.9); transform:translateY(-50%) scale(1.1); box-shadow:0 4px 15px rgba(229,9,20,.4); }
-    .card { min-width:200px; cursor:pointer; transition:all .3s; scroll-snap-align:start; position:relative; border-radius:12px; overflow:hidden; box-shadow:0 4px 15px rgba(0,0,0,.3); }
-    .card img { width:100%; height:300px; object-fit:cover; transition:transform .3s; }
-    .card .info { position:absolute; bottom:0; left:0; width:100%; background:linear-gradient(transparent, rgba(0,0,0,.9)); padding:20px 10px 10px; font-size:.9rem; text-align:center; font-weight:600; transform:translateY(100%); transition:transform .3s; }
-    .card:hover img { transform:scale(1.1); } .card:hover .info { transform:translateY(0); }
-    #results { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px,1fr)); gap:2rem; padding:2rem 4%; }
-    #player { display:none; padding:2rem 4%; min-height:100vh; }
-    .player-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem; }
-    .back-btn { background:#e50914; color:#fff; border:none; padding:12px 24px; border-radius:25px; cursor:pointer; font-size:1rem; display:flex; gap:10px; align-items:center; }
-    .player-info { background:linear-gradient(135deg, rgba(229,9,20,.1), rgba(0,0,0,.8)); border-radius:12px; padding:2rem; margin-bottom:2rem; backdrop-filter:blur(10px); border:1px solid rgba(229,9,20,.2); }
-    .player-info h1 { font-size:2.5rem; margin-bottom:1rem; color:#e50914; text-shadow:2px 2px 4px rgba(0,0,0,.5); }
-    .player-content { display:grid; grid-template-columns:1fr 300px; gap:2rem; }
-    .video-container { position:relative; border-radius:12px; overflow:hidden; box-shadow:0 8px 30px rgba(0,0,0,.5); }
-    iframe#player-iframe { width:100%; height:60vh; border:none; }
-    .episode-selector { background:rgba(255,255,255,.08); border-radius:12px; padding:1.5rem; backdrop-filter:blur(10px); }
-    .episodes-list { max-height:400px; overflow-y:auto; }
-    .episode-item { padding:12px; margin-bottom:8px; background:rgba(255,255,255,.03); border-radius:8px; cursor:pointer; border:2px solid transparent; }
-    .episode-item.active { background:rgba(229,9,20,.18); border-color:#e50914; }
-    .continue-controls { display:flex; gap:10px; align-items:center; justify-content:flex-end; padding:0 4%; margin-top:.5rem; }
-    .continue-controls button { background:rgba(255,255,255,.06); color:#fff; border:1px solid rgba(255,255,255,.08); padding:8px 12px; border-radius:8px; cursor:pointer; }
-    .loading { display:inline-block; width:20px; height:20px; border:3px solid rgba(255,255,255,.3); border-radius:50%; border-top-color:#e50914; animation:spin 1s linear infinite; }
-    @keyframes spin { to{ transform:rotate(360deg); } }
-    @media (max-width:768px){ .player-content{ grid-template-columns:1fr } #search{ width:250px } .card{ min-width:150px } }
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{background:#141414;color:#fff;font-family:'Segoe UI',Tahoma, Geneva, Verdana, sans-serif;line-height:1.6}
+    header{position:fixed;top:0;left:0;right:0;z-index:100;background:linear-gradient(180deg,rgba(0,0,0,.9)0%,rgba(0,0,0,.7)70%,transparent 100%);backdrop-filter:blur(10px);padding:1rem 4%;display:flex;justify-content:space-between;align-items:center;transition:background .3s}
+    header.scrolled{background:rgba(0,0,0,.95)}
+    .logo{font-size:2rem;font-weight:700;color:#e50914;text-shadow:2px 2px 4px rgba(0,0,0,.8)}
+    #search{padding:12px 20px;font-size:1rem;width:350px;border:2px solid rgba(255,255,255,.2);border-radius:25px;background:rgba(0,0,0,.7);color:#fff;outline:none;transition:all .3s}
+    #search:focus{border-color:#e50914;box-shadow:0 0 20px rgba(229,9,20,.3);transform:scale(1.02)}
+    main{margin-top:80px}
+    .hero{height:70vh;background:linear-gradient(45deg,#e50914,#b20710);display:flex;align-items:center;justify-content:center;text-align:center;margin-bottom:3rem}
+    .hero-content h1{font-size:4rem;margin-bottom:1rem;text-shadow:3px 3px 6px rgba(0,0,0,.8)}
+    .hero-content p{font-size:1.5rem;opacity:.9;max-width:600px;margin:0 auto}
+    section{margin:3rem 0}
+    section h2{font-size:2rem;margin-bottom:1.5rem;padding-left:4%;color:#fff;position:relative}
+    section h2::before{content:'';position:absolute;left:4%;bottom:-5px;width:60px;height:3px;background:#e50914}
+    .carousel-container{position:relative;margin:0 4%}
+    .carousel{display:flex;overflow-x:auto;gap:1rem;scroll-snap-type:x mandatory;scroll-behavior:smooth;padding:0 50px}
+    .carousel::-webkit-scrollbar{display:none}
+    .carousel-btn{position:absolute;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.8);color:#fff;border:none;width:40px;height:40px;border-radius:50%;cursor:pointer;font-size:1.2rem;z-index:10;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(5px);transition:all .3s}
+    .carousel-btn.prev{left:5px}.carousel-btn.next{right:5px}
+    .carousel-btn:hover{background:rgba(229,9,20,.9);transform:translateY(-50%) scale(1.1);box-shadow:0 4px 15px rgba(229,9,20,.4)}
+    .card{min-width:200px;cursor:pointer;transition:all .3s;scroll-snap-align:start;position:relative;border-radius:12px;overflow:hidden;box-shadow:0 4px 15px rgba(0,0,0,.3)}
+    .card img{width:100%;height:300px;object-fit:cover;transition:transform .3s}
+    .card .info{position:absolute;bottom:0;left:0;width:100%;background:linear-gradient(transparent,rgba(0,0,0,.9));padding:20px 10px 10px;font-size:.9rem;text-align:center;font-weight:600;transform:translateY(100%);transition:transform .3s}
+    .card:hover img{transform:scale(1.1)}.card:hover .info{transform:translateY(0)}
+    #results{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:2rem;padding:2rem 4%}
+    #player{display:none;padding:2rem 4%;min-height:100vh}
+    .player-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:2rem}
+    .back-btn{background:#e50914;color:#fff;border:none;padding:12px 24px;border-radius:25px;cursor:pointer;font-size:1rem;display:flex;gap:10px;align-items:center}
+    .player-info{background:linear-gradient(135deg,rgba(229,9,20,.1),rgba(0,0,0,.8));border-radius:12px;padding:2rem;margin-bottom:2rem;backdrop-filter:blur(10px);border:1px solid rgba(229,9,20,.2)}
+    .player-info h1{font-size:2.5rem;margin-bottom:1rem;color:#e50914;text-shadow:2px 2px 4px rgba(0,0,0,.5)}
+    .player-content{display:grid;grid-template-columns:1fr 300px;gap:2rem}
+    .video-container{position:relative;border-radius:12px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+    iframe#player-iframe{width:100%;height:60vh;border:none}
+    .episode-selector{background:rgba(255,255,255,.08);border-radius:12px;padding:1.5rem;backdrop-filter:blur(10px)}
+    .episodes-list{max-height:400px;overflow-y:auto}
+    .episode-item{padding:12px;margin-bottom:8px;background:rgba(255,255,255,.03);border-radius:8px;cursor:pointer;border:2px solid transparent}
+    .episode-item.active{background:rgba(229,9,20,.18);border-color:#e50914}
+    .continue-controls{display:flex;gap:10px;align-items:center;justify-content:flex-end;padding:0 4%;margin-top:.5rem}
+    .continue-controls button{background:rgba(255,255,255,.06);color:#fff;border:1px solid rgba(255,255,255,.08);padding:8px 12px;border-radius:8px;cursor:pointer}
+    .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#e50914;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media(max-width:768px){.player-content{grid-template-columns:1fr}#search{width:250px}.card{min-width:150px}}
   </style>
 </head>
 <body>
   <header id="header">
     <div class="logo">VixFlix</div>
-    <div class="search-container">
-      <input id="search" type="text" placeholder="🔍 Cerca film, serie TV..." />
-    </div>
+    <div class="search-container"><input id="search" type="text" placeholder="🔍 Cerca film, serie TV..." /></div>
   </header>
 
   <main>
@@ -135,7 +133,8 @@
 
       <div class="player-content">
         <div class="video-container">
-          <iframe id="player-iframe" allowfullscreen sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+          <!-- iframe senza sandbox, libero di eseguire script e comunicare -->
+          <iframe id="player-iframe" allowfullscreen></iframe>
         </div>
 
         <div class="episode-selector" id="episode-selector" style="display:none;">
@@ -149,7 +148,7 @@
           <div style="margin-top:12px;">
             <button onclick="saveCurrentTimestampManually()">Salva timestamp corrente</button>
             <div style="margin-top:8px;color:rgba(255,255,255,.7);font-size:.9rem;">
-              Nota: per motivi di cross-origin il salvataggio automatico del currentTime in iframe potrebbe non funzionare.
+              Nota: se il provider supporta postMessage salveremo automaticamente il currentTime.
             </div>
           </div>
         </div>
@@ -160,11 +159,11 @@
   <script>
     const API_KEY = '8265bd1679663a7ea12ac168da84d2e8';
     const endpoints = {
-      trending: `trending/all/week`,
-      nowPlaying: `movie/now_playing`,
-      popularMovies: `movie/popular`,
-      onTheAir: `tv/on_the_air`,
-      popularTV: `tv/popular`
+      trending: 'trending/all/week',
+      nowPlaying: 'movie/now_playing',
+      popularMovies: 'movie/popular',
+      onTheAir: 'tv/on_the_air',
+      popularTV: 'tv/popular'
     };
 
     let currentItem = null;
@@ -267,8 +266,7 @@
       let subtitle = '';
       if (data.type === 'tv') subtitle = `S${data.seasonNumber}E${data.episodeNumber}`;
       const titleEscaped = (data.title || 'Contenuto').replace(/"/g,'');
-
-      const timeLabel = data.timestamp ? ` • ⏱️ ${formatTime(data.timestamp)}` : '';
+      const timeLabel = data.timestamp != null ? ` • ⏱️ ${formatTime(data.timestamp)}` : '';
       section.innerHTML = `
         <h2>⏯️ Continua a guardare</h2>
         <div class="carousel-container">
@@ -303,24 +301,24 @@
         const url = buildUrlForMovie(data.id, data.timestamp);
         showPlayerForMovie(data.id, data.title, url);
       } else {
-        const url = buildUrlForEpisode(data.id, data.seasonNumber, data.episodeNumber, data.timestamp);
-        // Ensure player UI updated via play() then navigate to episode/url
         play({ id: data.id, name: data.title });
         setTimeout(() => {
+          const url = buildUrlForEpisode(data.id, data.seasonNumber, data.episodeNumber, data.timestamp);
           document.getElementById('player-iframe').src = url;
+          startTimestampPolling();
         }, 700);
       }
     }
 
     function buildUrlForMovie(id, timestamp) {
       let url = `https://vixsrc.to/movie/${id}/?primaryColor=ff0000&lang=it`;
-      if (timestamp) url += `&start=${Math.floor(timestamp)}`;
+      if (timestamp != null) url += `&start=${Math.floor(timestamp)}`;
       return url;
     }
 
     function buildUrlForEpisode(tvId, seasonNumber, episodeNumber, timestamp) {
       let url = `https://vixsrc.to/tv/${tvId}/${seasonNumber}/${episodeNumber}/?primaryColor=ff0000&lang=it`;
-      if (timestamp) url += `&start=${Math.floor(timestamp)}`;
+      if (timestamp != null) url += `&start=${Math.floor(timestamp)}`;
       return url;
     }
 
@@ -364,10 +362,11 @@
         document.getElementById('player-iframe').src = url;
 
         localStorage.setItem('lastWatched', JSON.stringify({
-          type: 'movie', id, title: item.title || item.name || 'Film', savedAt: Date.now(), timestamp: getSavedTimestampIfSame('movie', id)
+          type: 'movie', id, title: item.title || item.name || 'Film', savedAt: Date.now(),
+          timestamp: getSavedTimestampIfSame('movie', id) || null
         }));
         showContinueWatching();
-        startTimestampPolling(); // try polling via postMessage where possible
+        startTimestampPolling();
       } else {
         document.getElementById('episode-selector').style.display = 'block';
         await loadTVSeasons(id);
@@ -389,6 +388,7 @@
         currentSeasons = seasons.filter(s => s.season_number > 0);
         const seasonSelect = document.getElementById('season-select');
         seasonSelect.innerHTML = '';
+
         currentSeasons.forEach(season => {
           const option = document.createElement('option');
           option.value = season.season_number;
@@ -396,14 +396,13 @@
           seasonSelect.appendChild(option);
         });
 
-        if (currentSeasons.length > 0) {
-          await loadSeasonEpisodes(tvId, currentSeasons[0].season_number);
-          const resume = JSON.parse(localStorage.getItem('lastWatched'));
-          if (resume && resume.type === 'tv' && resume.id == tvId) {
-            // If same show saved, resume saved episode and timestamp
-            await loadSeasonEpisodes(tvId, resume.seasonNumber);
-            playEpisode(tvId, resume.seasonNumber, resume.episodeNumber, resume.timestamp);
-          } else {
+        const resume = JSON.parse(localStorage.getItem('lastWatched'));
+        if (resume && resume.type === 'tv' && resume.id == tvId) {
+          await loadSeasonEpisodes(tvId, resume.seasonNumber);
+          playEpisode(tvId, resume.seasonNumber, resume.episodeNumber, resume.timestamp);
+        } else {
+          if (currentSeasons.length > 0) {
+            await loadSeasonEpisodes(tvId, currentSeasons[0].season_number);
             playEpisode(tvId, currentSeasons[0].season_number, 1);
           }
         }
@@ -467,7 +466,6 @@
       window.scrollTo(0,0);
     }
 
-    // Manual save button for timestamp (useful when we cannot read iframe time)
     function saveCurrentTimestampManually() {
       const input = prompt('Inserisci il timestamp in secondi da salvare (es. 123):', '0');
       if (input === null) return;
@@ -481,31 +479,19 @@
       alert('Timestamp salvato: ' + formatTime(seconds));
     }
 
-    // Attempt to poll iframe via postMessage for players that support it (best-effort)
     function startTimestampPolling() {
       stopTimestampPolling();
       const iframe = document.getElementById('player-iframe');
       if (!iframe) return;
-
-      // Try to request time every 5s using postMessage — many third-party players won't respond due to CORS
       timestampPollInterval = setInterval(() => {
-        try {
-          // Ask iframe for time (many providers ignore this)
-          iframe.contentWindow.postMessage({ type: 'REQUEST_CURRENT_TIME' }, '*');
-        } catch (e) {
-          // ignore
-        }
+        try { iframe.contentWindow.postMessage({ type:'REQUEST_CURRENT_TIME' }, '*'); } catch(e) {}
       }, 5000);
     }
 
     function stopTimestampPolling() {
-      if (timestampPollInterval) {
-        clearInterval(timestampPollInterval);
-        timestampPollInterval = null;
-      }
+      if (timestampPollInterval) { clearInterval(timestampPollInterval); timestampPollInterval = null; }
     }
 
-    // Listen for messages from iframe (providers that support postMessage can reply with { type:'CURRENT_TIME', currentTime: seconds })
     window.addEventListener('message', (ev) => {
       if (!ev.data) return;
       const msg = ev.data;
@@ -519,15 +505,14 @@
     });
 
     function formatTime(sec) {
-      if (!sec && sec !== 0) return '';
+      if (sec == null) return '';
       const s = Number(sec);
-      const h = Math.floor(s / 3600);
-      const m = Math.floor((s % 3600) / 60);
-      const ss = Math.floor(s % 60);
-      return (h > 0 ? h + ':' : '') + String(m).padStart(h > 0 ? 2 : 1, '0') + ':' + String(ss).padStart(2,'0');
+      const h = Math.floor(s/3600);
+      const m = Math.floor((s%3600)/60);
+      const ss = Math.floor(s%60);
+      return (h>0 ? h+':' : '') + String(m).padStart(h>0?2:1,'0') + ':' + String(ss).padStart(2,'0');
     }
 
-    // Helper when showing movie via resume
     function showPlayerForMovie(id, title, url) {
       document.getElementById('home').style.display = 'none';
       document.getElementById('results').style.display = 'none';
@@ -540,7 +525,6 @@
       startTimestampPolling();
     }
 
-    // Search
     document.getElementById('search').addEventListener('keydown', async (e) => {
       if (e.key !== 'Enter') return;
       const q = e.target.value.trim();
@@ -564,7 +548,7 @@
       }
     });
 
-    // Initialize
+    // Avvio
     loadHome();
   </script>
 </body>
